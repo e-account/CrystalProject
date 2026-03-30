@@ -37,7 +37,6 @@ class User(db.Model):
     forename = db.Column(db.String(128), nullable=False)
     surname = db.Column(db.String(128), nullable=False)
     admin = db.Column(db.Boolean, nullable=False, default=False)
-    crystal = db.Column(db.String(128))
 
     # a back-referenced link that allows for easier object referencing between the User and Ticket classes
     tickets = db.relationship('Ticket', backref='user', lazy=True)
@@ -75,8 +74,8 @@ class Team(db.Model):
     type = db.Column(db.String(128), nullable=False)
     size = db.Column(db.Integer, nullable=False)
 
-    # linking two of the classes together with user.crystal as the primary key
-    teamkey = db.Column(db.String(128), db.ForeignKey('user.crystal'))
+    # linking two of the classes together with user.username as the primary key
+    teamkey = db.Column(db.String(128), db.ForeignKey('user.username'))
 
     # __repr__ returns a string of the current object which helps for debugging and interacting with the database
     def __repr__(self):
