@@ -1,0 +1,50 @@
+# name of the yaml file
+name: pipeline
+
+# the workflow will trigger once there is a push to the main branch of the github repository
+on:
+  push:
+    branches:
+    # specifically pushes to the main branch
+    - main
+  # allows the yaml file to be run from the github repo or the CLI without a direct push being required
+  workflow_dispatch: 
+
+jobs:
+  build:
+    # the github hosted server on the latest patch of the ubuntu server which is one of the more flexible and lightweight servers available
+    runs-on: ubuntu-latest
+
+    steps:
+      # this checks out the repo without having to clone the repository which helps runs tests without pushing unnecessary clones
+      - name: checkout
+        # using the most recent version of the checkout step
+        uses: actions/checkout@v4
+
+      # currently sets up the python version to be correlated to the version used to develop the webapp
+      - name: python version
+        uses: actions/setup-python@v3
+        with:
+          # the current python ver
+          python-version: '3.13'
+
+      # the set requirements for the linters and tests to run through the pipeline
+      - name: python requirements
+        run: |
+          python -m pip install --upgrade pip
+          python3.13 -m venv env
+          source env/bin/activate
+          pip install -r requirements.txt
+
+      # python linters are great checkers that view the entire code for any errors, syntax issues or unused variables
+      - name: python linter
+        # ruff is one of the best python linters written in Rust, it can perform linting, config and formatting checks and fixes
+        uses: astral-sh/ruff-action@v3
+        with:
+          # runs the linter over the main directory specifically applying fixes and outputting a diff for each changed file
+          args: "check --fix --diff"
+
+      # the deployment is run in the background making use of the nohup command
+      - name: python deployment
+        run: |
+          nohup python3 app.py &
