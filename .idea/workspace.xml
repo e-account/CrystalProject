@@ -4,7 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0f4295df-7d97-4aa5-8533-0978d671e88c" name="Changes" comment="security testing &amp; updates" />
+    <list default="true" id="0f4295df-7d97-4aa5-8533-0978d671e88c" name="Changes" comment="git CLI heroku">
+      <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -20,6 +22,7 @@
     </option>
   </component>
   <component name="Git.Settings">
+    <option name="PUSH_AUTO_UPDATE" value="true" />
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="GitHubPullRequestSearchHistory">{
@@ -197,7 +200,15 @@
       <option name="project" value="LOCAL" />
       <updated>1775675842362</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="git CLI heroku">
+      <option name="closed" value="true" />
+      <created>1775678137521</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1775678137522</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -217,6 +228,8 @@
     <MESSAGE value="database initialisation and constructor classes" />
     <MESSAGE value="project update, final dev push" />
     <MESSAGE value="security testing &amp; updates" />
-    <option name="LAST_COMMIT_MESSAGE" value="security testing &amp; updates" />
+    <MESSAGE value="cli push" />
+    <MESSAGE value="git CLI heroku" />
+    <option name="LAST_COMMIT_MESSAGE" value="git CLI heroku" />
   </component>
 </project>
