@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+<link rel="stylesheet" href="/static/visual.css">
+<link rel="icon" type="image/x-icon" href="/static/favicon.png">
+
+<head>
+    <meta charset="UTF-8">
+    <title>{{ title }}</title>
+</head>
+<body>
+    <div class="container">
+        {% block body %}
+        <h1>{{ formheader }}</h1>
+        <h2>{{ formtext }}</h2>
+        {% if aduse == True %}
+        <h1>Current Users</h1>
+            <div class="box-list">
+                {% for x in adused %}
+                <div>
+                    <a href="{{ url_for('userview', id=x.id, users=users) }}">{{ x.username }}</a>
+                </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+        {% if aduse == False %}
+        <h1>User:</h1>
+        <p>Username: {{ used.username }}</p>
+        <p>Password: {{ used.password }}</p>
+        <p>Forename: {{ used.forename }}</p>
+        <p>Surname: {{ used.surname }}</p>
+        <div>
+            <h1>Update User?</h1>
+            <div style="text-align: center; margin-top: 20px;">{{ wtf.quick_form(form) }}</div>
+        </div>
+        <div>
+            <h1>Delete User?</h1>
+            <div style="text-align: center; margin-top: 20px;">{{ wtf.quick_form(form1) }}</div>
+        </div>
+        {% endif %}
+        {% endblock %}
+    </div>
+</body>
+</html>

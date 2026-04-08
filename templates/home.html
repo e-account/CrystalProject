@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- jinja2 bootstrap allows for the base.html template to be copied across all webpages without having to copy code -->
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+<link rel="stylesheet" href="/static/visual.css">
+<link rel="icon" type="image/x-icon" href="/static/favicon.png">
+
+<head>
+    <!-- jinja2 block title to take the title from app.py -->
+    <meta charset="UTF-8">
+    <title>{{ title }}</title>
+</head>
+<body>
+    <div class="container">
+        {% block body %}
+        <h1>Welcome to Crystal</h1>
+        <h2 style="margin-top: 12px;">The Scalable Agile Solution </h2>
+        <div style="text-align: center; margin-top: 24px;">{{ wtf.quick_form(form) }}</div>
+        {% endblock %}
+    </div>
+</body>
+</html>

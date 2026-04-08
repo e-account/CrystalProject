@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+<link rel="stylesheet" href="/static/visual.css">
+<link rel="icon" type="image/x-icon" href="/static/favicon.png">
+
+<head>
+    <meta charset="UTF-8">
+    <title>{{ title }}</title>
+</head>
+<body>
+    <div class="container">
+        {% block body %}
+        <h1>{{ formheader }}</h1>
+        <h2>{{ formtext }}</h2>
+        <div style="text-align: center; margin-top: 20px;">{{ wtf.quick_form(form) }}</div>
+        {% endblock %}
+    </div>
+</body>
+</html>

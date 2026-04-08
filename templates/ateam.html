@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+<link rel="stylesheet" href="/static/visual.css">
+<link rel="icon" type="image/x-icon" href="/static/favicon.png">
+
+<head>
+    <meta charset="UTF-8">
+    <title>{{ title }}</title>
+</head>
+<body>
+    <div class="container">
+        {% block body %}
+        <h1>Team:</h1>
+        <p>Username: {{ teams.name }}</p>
+        <p>Password: {{ teams.type }}</p>
+        <p>Forename: {{ teams.size }}</p>
+        <div>
+            <h1>Edit Team?</h1>
+            <div style="text-align: center; margin-top: 20px;">{{ wtf.quick_form(form) }}</div>
+        </div>
+        <div>
+            <h1>Delete Team?</h1>
+            <div style="text-align: center; margin-top: 20px;">{{ wtf.quick_form(form1) }}</div>
+        </div>
+        {% endblock %}
+    </div>
+</body>
+</html>

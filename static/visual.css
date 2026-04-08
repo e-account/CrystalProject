@@ -1,0 +1,108 @@
+/* General Rules */
+/* CSS rules affecting all "*" */
+* {
+    box-sizing: border-box; /* Default template styling for browsers */
+    margin: 0; /* Setting all margins to zero unless otherwise specified */
+    padding: 0; /* Setting all padding to zero unless otherwise specified */
+}
+
+/* Set of variables that can universally be applied across all area of the CSS document */
+:root {
+    --branding-colour: #A67CFF; /* A colour gradient using the logo colours */
+}
+
+/* Set characteristics for the headers of the webpage */
+h1 {
+    font-size: 20px;
+    justify-content: space-between;
+    text-align: center;
+}
+
+/* Set characteristics for the subheaders of the webpage */
+h2 {
+    font-size: 18px;
+    color: grey;
+    justify-content: space-between;
+    text-align: center;
+}
+
+/* Set characteristics for the paragraphs of the webpage */
+p {
+    font-size: 1rem;
+    text-align: center;
+    justify-content: space-between;
+}
+
+/* CSS rules affecting body of text */
+body {
+    font-family: 'Roboto', sans-serif; /* sets all fonts in the body to Roboto, which tends to be the best internet font */
+    font-size: 16px;
+    line-height: 1; /* Sets line spacing to 1px */
+    background: white; /* Turns background of the body white */
+}
+
+/* CSS rules affecting all text labelled "a" */
+a {
+    text-decoration: none; /* Removes all decorative lines on text */
+    color: black; /* Turns text black */
+}
+
+/* CSS rules affecting all unordered lists */
+ul {
+    list-style: none; /* Removes any initial styling to unordered lists */
+}
+
+/* CSS rules affecting the navbar */
+.navbar {
+    background: white; /* Turns background of the navbar white */
+    padding: 20px; /* Adding a small border of pixels around the navbar */
+}
+
+/* CSS rules affecting .navbar as a flex box */
+.navbar .container {
+    display: flex; /* Turns the items within the navbar container as flex items so they are separated */
+    justify-content: space-between; /* Spaces the container and main-menu sections of the navbar on opposite sides of the web page */
+    align-items: center; /* Aligns both flex boxes to the centre of the navbar */
+}
+
+/* CSS rules affecting the .menu unordered list */
+.navbar .menu ul {
+    display: flex; /* Turns the .menu list into a flex box and orders the list horizontally */
+}
+
+/* CSS rules affecting the navbar lists */
+.navbar ul li a {
+    padding: 10px 20px; /* Creates enough space between the list items */
+    display: block; /* The list will be evenly spaced out and distinct from one another */
+    transition: 0.6s; /* Allows the selected text to transition to another cover when interacted with */
+}
+
+/* CSS rules affecting the hover mechanic for the main menu list */
+.navbar ul li a:hover {
+    color: var(--branding-colour); /* This is the Hex code for the yellow of the logo, which would make the website feel cohesive */
+}
+
+/* Ensures container class' width doesn't extend past 1100 pixels to keep the webpage more centralised */
+.container {
+    max-width: 1100px;
+    margin: 0 auto; /* Setting the container margin to zero */
+    padding: 0 15px; /* Adding a small border of pixels around the container */
+}
+
+/* Due to flask forms, the button CSS command doesn't work as its a submit field */
+input[type=submit] {
+    display: inline-block;
+    padding: 8px 15px;
+    background-color: grey;
+    color: black;
+    text-decoration: none;
+    border: none;
+    border-radius: 12px; /* Ensures the buttons have rounded corners */
+    cursor: pointer; /* Cursor becomes a pointer when hovering over the button */
+    transition: 0.6s;
+}
+
+/* The submit field's background will change colour to the variation of the four branding colours of the logo */
+input[type=submit]:hover {
+    background-color: var(--branding-colour);
+}

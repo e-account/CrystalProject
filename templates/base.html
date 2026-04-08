@@ -1,10 +1,34 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- jinja2 block title to change the header across different webpages -->
     <meta charset="UTF-8">
-    <title>{{ maintitle }}</title>
+    <title>{% block title %}{% endblock %}</title>
+        <!-- across the whole webpage the css sheet will be implemented with the logo being used as the favicon -->
+        <link rel="stylesheet" href="/static/visual.css">
+        <link rel="icon" type="image/x-icon" href="/static/favicon.png">
 </head>
 <body>
-
+    <!-- a navbar implemented to help users navigate the website quickly -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="logo">
+                <a href="{{ url_for('main') }}">
+                    <img src="/static/logo.png" alt="logo" width="140" height="auto">
+                </a>
+            </div>
+            <div class="menu">
+                <ul>
+                    <li>
+                        <a href="{{ url_for('main') }}">Home</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <!-- using the jinja2 body for easier formatting across child templates -->
+    <div class="container">
+        {% block body %} {% endblock %}
+    </div>
 </body>
 </html>
