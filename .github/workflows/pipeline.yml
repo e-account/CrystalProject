@@ -11,7 +11,7 @@ on:
   workflow_dispatch: 
 
 jobs:
-  run_tests:
+  build:
     # the github hosted server on the latest patch of the ubuntu server which is one of the more flexible and lightweight servers available
     runs-on: ubuntu-latest
 
