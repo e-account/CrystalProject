@@ -8,7 +8,7 @@ on:
     # specifically pushes to the main branch
     - main
   # allows the yaml file to be run from the github repo or the CLI without a direct push being required
-  workflow_dispatch: 
+  workflow_dispatch:
 
 jobs:
   build:

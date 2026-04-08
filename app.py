@@ -11,20 +11,26 @@ from wtforms import *
 from wtforms.validators import *
 # a lightweight sqlite database to quick and efficient web development
 from flask_sqlalchemy import SQLAlchemy
+# importing the dotenv instance to store important environment variables within the .env file
+from dotenv import load_dotenv
+load_dotenv()
 # main application constructor classes
 app = Flask(__name__)
 bootstrap = Bootstrap(app)
 # set to allow for direct access to the root path of the application environment
 basedir = os.path.abspath(os.path.dirname(__file__))
 # Secret key for securing the config part of the application
-app.config['SECRET_KEY'] = 'thisisaninvalidsecretkey'
+app.config['SECRET_KEY'] = os.getenv('SECURITY')
 # sqlalchemy database pathway config that will track updates to the database
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'db.sqlite')
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASECONFIG') + os.path.join(basedir, os.getenv('DATABASENAME'))
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = os.getenv('SQL-TRACK-MOD')
 # database object constructor
 db = SQLAlchemy(app)
 # Debug variable held externally from the app.run command to allow for easier debug management
-Debug = True
+Debug = os.getenv('DEBUG')
+# Universal variables to check for the current user access across accounts
+active_user = os.getenv('USER')
+active_admin = os.getenv('ADMIN')
 
 # constructor class for the database table "user"
 class User(db.Model):
@@ -172,14 +178,12 @@ def make_shell_context():
     # dictionary terms used for interfacing with the database in the python shell
     return dict(db=db, User=User, Ticket=Ticket, Team=Team)
 
-# creates application instance for the navbar menu interaction
-@app.route('/rerouting', methods=['GET', 'POST'])
-def reroute():
-        return redirect(url_for('main'))
-
 # creates an application instance for the website homepage
 @app.route('/', methods=['GET', 'POST'])
 def main():
+    global active_user, active_admin  # allows the app route to have access to the active variables
+    active_user = False
+    active_admin = False
     title = "Welcome to Crystal"
     form = MainMenu()
     if form.validate_on_submit():
@@ -193,6 +197,9 @@ def main():
 # creates an application instance for '/signup' webpage
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
+    global active_user, active_admin  # allows the app route to have access to the active variables
+    active_user = False
+    active_admin = False
     # text that will be added to the html templates using bootstrap for efficiency, allowing templates to be reused
     title = "Crystal: Signup"
     formheader = "Create an account with Crystal"
@@ -221,6 +228,9 @@ def signup():
 # creates an application instance for '/login' webpage
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    global active_user, active_admin  # allows the app route to have access to the active variables
+    active_user = False
+    active_admin = False
     # text that will be added to the html templates using bootstrap for efficiency, allowing templates to be reused
     title = "Crystal: Login"
     formheader = "Login to your Crystal account"
@@ -230,8 +240,10 @@ def login():
     login_query = User.query.filter(User.username.in_([form.username.data]), User.password.in_([form.password.data])).first()
     if form.validate_on_submit():  # validation of login menu
         if login_query.admin == 0:
+            active_user = True
             return redirect(url_for('user', users=form.username.data))
         elif login_query.admin == 1:
+            active_admin = True
             return redirect(url_for('admin', users=form.username.data))
         else:  # else function that prevents non-logged in people from accessing the site through inputting random urls
             return redirect('/login')
@@ -241,6 +253,7 @@ def login():
 # creates an application instance for '/user/username' webpage
 @app.route('/user/<string:users>', methods=['GET', 'POST'])
 def user(users):
+    global active_user, active_admin  # allows the app route to have access to the active variables
     # text that will be added to the html templates using bootstrap for efficiency, allowing templates to be reused
     title = "Crystal: Homepage"
     formheader = "Welcome ".join([users])  + " to your Crystal account"
@@ -249,23 +262,28 @@ def user(users):
     # search queries that validate the existence of a user account and whether that account is an admin or standard user account
     account_search = User.query.filter(User.username.in_([users])).first()
     if account_search is not None:
-        if form.validate_on_submit(): # redirects to different webpages based on the submitfield pressed within the form
-            if 'newticket' in request.form:
-                return redirect(url_for('newticket', users=users))
-            if 'viewticket' in request.form:
-                return redirect(url_for('viewticket', users=users))
-            if 'viewaccount' in request.form:
-                return redirect(url_for('viewuser', users=users))
-            if 'logout' in request.form:
-                return redirect('/')
-        return render_template('menu.html', title=title, form=form,
-                               formheader=formheader, formtext=formtext)
+        if active_user == True:
+            if form.validate_on_submit():  # redirects to different webpages based on the submitfield pressed within the form
+                if 'newticket' in request.form:
+                    return redirect(url_for('newticket', users=users))
+                if 'viewticket' in request.form:
+                    return redirect(url_for('viewticket', users=users))
+                if 'viewaccount' in request.form:
+                    return redirect(url_for('viewuser', users=users))
+                if 'logout' in request.form:
+                    active_user = False
+                    return redirect('/')
+            return render_template('menu.html', title=title, form=form,
+                                   formheader=formheader, formtext=formtext)
+        else: # if the user input is incorrect it will redirect to the homepage
+            return redirect('/')
     else: # if the user input is incorrect it will redirect to the homepage
         return redirect('/')
 
 
 @app.route('/admin/<string:users>', methods=['GET', 'POST'])
 def admin(users):
+    global active_user, active_admin # allows the app route to have access to the active variables
     # text that will be added to the html templates using bootstrap for efficiency, allowing templates to be reused
     title = "Crystal: Admin"
     formheader = "Welcome ".join([users]) + " to your Crystal account"
@@ -274,25 +292,30 @@ def admin(users):
     # search queries that validate the existence of a user account and whether that account is an admin or standard user account
     account_search = User.query.filter(User.username.in_([users])).first()
     if account_search is not None:
-        if form.validate_on_submit(): # redirects to different webpages based on the submitfield pressed within the form
-            if 'viewticket' in request.form:
-                return redirect(url_for('viewticket', users=users))
-            if 'viewusers' in request.form:
-                return redirect(url_for('viewuser', users=users))
-            if 'newteams' in request.form:
-                return redirect(url_for('newteam', users=users))
-            if 'viewteams' in request.form:
-                return redirect(url_for('viewteams', users=users))
-            if 'logout' in request.form:
-                return redirect('/')
-        return render_template('menu.html', title=title, form=form,
-                               formheader=formheader, formtext=formtext)
+        if active_admin == True:
+            if form.validate_on_submit():  # redirects to different webpages based on the submitfield pressed within the form
+                if 'viewticket' in request.form:
+                    return redirect(url_for('viewticket', users=users))
+                if 'viewusers' in request.form:
+                    return redirect(url_for('viewuser', users=users))
+                if 'newteams' in request.form:
+                    return redirect(url_for('newteam', users=users))
+                if 'viewteams' in request.form:
+                    return redirect(url_for('viewteams', users=users))
+                if 'logout' in request.form:
+                    active_admin = False
+                    return redirect('/')
+            return render_template('menu.html', title=title, form=form,
+                                   formheader=formheader, formtext=formtext)
+        else: # if the user input is incorrect it will redirect to the homepage
+            return redirect('/')
     else: # if the user input is incorrect it will redirect to the homepage
         return redirect('/')
 
 # creates application instance for '/user/username/new_ticket'
 @app.route('/user/<string:users>/new_ticket', methods=['GET', 'POST'])
 def newticket(users):
+    global active_user, active_admin  # allows the app route to have access to the active variables
     title = "Crystal: New Ticket"
     formheader = "Crystal ticket template creator"
     formtext = "Ensure that the data inputted is correct"
@@ -300,25 +323,29 @@ def newticket(users):
     # search queries that validate the existence of a user account and whether that account is an admin or standard user account
     account_search = User.query.filter(User.username.in_([users])).first()
     if account_search is not None:
-        if form.validate_on_submit():
-            new_ticket = Ticket(type=form.type.data, title=form.title.data,
+        if active_user == True:
+            if form.validate_on_submit():
+                new_ticket = Ticket(type=form.type.data, title=form.title.data,
                                     desc=form.desc.data, userkey=users, verif=0)
-            db.session.add(new_ticket)
-            db.session.commit()
-            return redirect(url_for('user', users=users))
-        return render_template('menu.html', form=form, title=title,
-                               formheader=formheader, formtext=formtext)
+                db.session.add(new_ticket)
+                db.session.commit()
+                return redirect(url_for('user', users=users))
+            return render_template('menu.html', form=form, title=title,
+                                   formheader=formheader, formtext=formtext)
+        else: # if the user input is incorrect it will redirect to the homepage
+            return redirect('/')
     else:  # else function that prevents non-logged in people from accessing the site through inputting random urls
         return redirect(url_for('main'))
 
 # creates application instance for '/tickets/username' where tickets assigned to each user will be shown and admin accounts can see all accounts relating to each user
 @app.route('/tickets/<string:users>')
 def viewticket(users):
+    global active_user, active_admin  # allows the app route to have access to the active variables
     # variables to check whether the user is a standard user or admin
     tick = False
     # search queries that validate the existence of a user account and whether that account is an admin or standard user account
     account_query = User.query.filter(User.username.in_([users])).first()
-    if account_query.admin == 1:
+    if account_query.admin == 1 & active_admin == True:
         tick = True
         title = "Crystal: Admin Ticket View"
         formheader = "View Tickets: Admin"
@@ -326,7 +353,7 @@ def viewticket(users):
         tickets = Ticket.query.filter(Ticket.id).all()  # database query to show all tickets in the database
         return render_template('ticketviewer.html', tickets=tickets, users=users, title=title,
                                formheader=formheader, formtext=formtext, tick=tick)
-    if account_query.admin == 0:
+    if account_query.admin == 0 & active_user == True:
         tick = True
         title = "Crystal: View Tickets"
         formheader = "View Tickets"
@@ -340,6 +367,7 @@ def viewticket(users):
 # creates the application instance for '/tickets/user/ticketid' where admins and users can view all their respective tickets
 @app.route('/tickets/<string:users>/<string:id>', methods=['GET', 'POST'])
 def viewtickets(users, id):
+    global active_user, active_admin  # allows the app route to have access to the active variables
     use = False
     aduse = False
     form = TicketApproval()
@@ -348,7 +376,7 @@ def viewtickets(users, id):
     account_query = User.query.filter(User.username.in_([users])).first()
     idticket = Ticket.query.filter(Ticket.id.in_([id])).first()
     title = ': Ticket No. ' + id + ", " + idticket.title
-    if account_query.admin == 1:
+    if account_query.admin == 1 & active_admin == True:
         aduse = True
         formheader = "View Tickets: Admin"
         formtext = "Ensure to manage all tickets correctly"
@@ -365,7 +393,7 @@ def viewtickets(users, id):
                 return redirect(url_for('viewtickets', users=users, id=id))  # reroutes to main menu once ticket is deleted
         return render_template('ticketviewer.html', idticket=idticket, title=title,
                                form=form, form1=form1, formheader=formheader, formtext=formtext, aduse=aduse)
-    if account_query.admin == 0:
+    if account_query.admin == 0 & active_user == True:
         use = True
         formheader = "View Tickets: Admin"
         formtext = "Ensure to manage all tickets correctly"
@@ -380,17 +408,18 @@ def viewtickets(users, id):
     # creates application instance for '/admin/<string:users>/viewuser' where admins will be able to view all user accounts
 @app.route('/account/<string:users>/viewuser', methods=['GET', 'POST'])
 def viewuser(users):
+    global active_user, active_admin  # allows the app route to have access to the active variables
     aduse = False
     title = 'Crystal: View User'
     account_query = User.query.filter(User.username.in_([users])).first()
     adused = User.query.filter(User.admin == 0).all()
-    if account_query.admin == 1:
+    if account_query.admin == 1 & active_admin == True:
         formheader = "View Accounts: Admin"
         formtext = "Manage User accounts below"
         aduse = True
         return render_template('userviewer.html', adused=adused, users=users, title=title,
                                    formheader=formheader, formtext=formtext, aduse=aduse)
-    elif account_query.admin == 0:
+    elif account_query.admin == 0 & active_user == True:
         return redirect(url_for('userview', users=users, id=account_query.id))
     else:  # else function that prevents non-logged in people from accessing the site through inputting random urls
         return redirect(url_for('main'))
@@ -398,6 +427,7 @@ def viewuser(users):
 # creates an application instance for the account/users/viewuser/id pathway
 @app.route('/account/<string:users>/viewuser/<string:id>', methods=['GET', 'POST'])
 def userview(users, id):
+    global active_user, active_admin  # allows the app route to have access to the active variables
     aduse = False
     form = EditAccount()
     form1 = DeleteAccount()
@@ -409,42 +439,49 @@ def userview(users, id):
     formheader = "Crystal Account Edit: "
     formtext = "Manage User accounts below"
     if used:
-        if form.validate_on_submit():  # validation of account edit
-            if new_username is None:  # updates the username against the database to ensure no values are committed while overlapping
-                used.username = form.username.data
-                used.password = form.password.data
-                used.forename = form.forename.data
-                used.surname = form.surname.data
-                db.session.add(used)
-                db.session.commit()
-                if account_query.admin == 1: # send back to viewuser page to update other accounts
-                    return redirect(url_for('viewuser', users=users))
-                elif account_query.admin == 0: # send back to main menu for the user to access their account with new login credentials
-                    return redirect('/')
-            else:
-                return redirect(url_for('userview', users=users, id=id))
-        if form1.validate_on_submit():  # validation of account deletion
-            if 'delete' in request.form:
-                delete_user = User.query.filter_by(id=id, admin=False).first()  # ensures the selected user cannot be an admin account
-                db.session.delete(delete_user)  # deletes the selected user
-                db.session.commit()
-                delete_tickets = Ticket.query.filter(Ticket.userkey == username).all()
-                for x in delete_tickets:
-                    # deletes each ticket in the delete_tickets query so no unlinked tickets are left in db
-                    db.session.delete(x)
+        if active_admin == True or active_user == True:
+            if form.validate_on_submit():  # validation of account edit
+                if new_username is None:  # updates the username against the database to ensure no values are committed while overlapping
+                    used.username = form.username.data
+                    used.password = form.password.data
+                    used.forename = form.forename.data
+                    used.surname = form.surname.data
+                    db.session.add(used)
                     db.session.commit()
-                if account_query.admin == 1: # send back to viewuser page to update other accounts
-                    return redirect(url_for('viewuser', users=users))
-                elif account_query.admin == 0: # send user back to homepage as the account and respective tickets have been deleted
-                    return redirect('/')
-        return render_template('userviewer.html', used=used, title=title, form=form, form1=form1,
-                               formheader=formheader, formtext=formtext, aduse=aduse)
+                    if account_query.admin == 1:  # send back to viewuser page to update other accounts
+                        return redirect(url_for('viewuser', users=users))
+                    elif account_query.admin == 0:  # send back to main menu for the user to access their account with new login credentials
+                        active_admin = False
+                        return redirect('/')
+                else:
+                    return redirect(url_for('userview', users=users, id=id))
+            if form1.validate_on_submit():  # validation of account deletion
+                if 'delete' in request.form:
+                    delete_user = User.query.filter_by(id=id,
+                                                       admin=False).first()  # ensures the selected user cannot be an admin account
+                    db.session.delete(delete_user)  # deletes the selected user
+                    db.session.commit()
+                    delete_tickets = Ticket.query.filter(Ticket.userkey == username).all()
+                    for x in delete_tickets:
+                        # deletes each ticket in the delete_tickets query so no unlinked tickets are left in db
+                        db.session.delete(x)
+                        db.session.commit()
+                    if account_query.admin == 1:  # send back to viewuser page to update other accounts
+                        return redirect(url_for('viewuser', users=users))
+                    elif account_query.admin == 0:  # send user back to homepage as the account and respective tickets have been deleted
+                        active_user = False
+                        return redirect('/')
+            return render_template('userviewer.html', used=used, title=title, form=form, form1=form1,
+                                   formheader=formheader, formtext=formtext, aduse=aduse)
+        else: # security to ensure those without an account can't impact the website
+            return('/')
     else: # security to ensure those without an account can't impact the website
         return('/')
 
 # creates an application instance for the admin/user/newteam pathway
 @app.route('/admin/<string:users>/newteam', methods=['GET', 'POST'])
 def newteam(users):
+    global active_user, active_admin  # allows the app route to have access to the active variables
     # text that will be added to the html templates using bootstrap for efficiency, allowing templates to be reused
     title = "Crystal: Team Creator"
     formheader = "Crystal Team Creator"
@@ -470,10 +507,11 @@ def newteam(users):
     # creates application instance for '/admin/<string:users>/viewuser' where admins will be able to view all user accounts
 @app.route('/admin/<string:users>/viewteams', methods=['GET', 'POST'])
 def viewteams(users):
+    global active_user, active_admin  # allows the app route to have access to the active variables
     title = 'Crystal: View Teams'
     account_query = User.query.filter(User.username.in_([users])).first()
     current_team = Team.query.filter(Team.teamkey == users)
-    if account_query.admin == 1:
+    if account_query.admin == 1 & active_admin == True:
         return render_template('teamviewer.html', users=users, current_team=current_team, title=title)
     else:  # else function that prevents non-logged in people from accessing the site through inputting random urls
         return redirect(url_for('main'))
@@ -481,6 +519,7 @@ def viewteams(users):
 # creates an application instance for the account/users/viewuser/id pathway
 @app.route('/admin/<string:users>/viewteams/<string:id>', methods=['GET', 'POST'])
 def teamview(users, id):
+    global active_user, active_admin  # allows the app route to have access to the active variables
     form = EditTeam()
     form1 = DeleteAccount()
     teams = Team.query.filter_by(id=id).first()
@@ -490,7 +529,7 @@ def teamview(users, id):
     title = 'Crystal Team: ' + teamtitle
     formheader = "Crystal Team Edit: "
     formtext = "Manage Crystal teams below"
-    if account_query.admin == 1:
+    if account_query.admin == 1 & active_admin == True:
         if form.validate_on_submit():  # validation of account edit
             if new_teams is None:
                 new_teams.name = form.name.data
