@@ -41,7 +41,7 @@ jobs:
         # ruff is one of the best python linters written in Rust, it can perform linting, config and formatting checks and fixes
         uses: astral-sh/ruff-action@v3
         with:
-          # runs the linter over the main directory specifically applying fixes and outputting a diff for each changed file
+          # runs the linter over the main directory specifically applying fixes for each changed file
           args: "check --fix --diff"
 
       # the deployment is run in the background making use of the nohup command
