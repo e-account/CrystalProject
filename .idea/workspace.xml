@@ -4,13 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0f4295df-7d97-4aa5-8533-0978d671e88c" name="Changes" comment="project update, final dev push">
-      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.github/workflows/pipeline.yml" beforeDir="false" afterPath="$PROJECT_DIR$/.github/workflows/pipeline.yml" afterDir="false" />
+    <list default="true" id="0f4295df-7d97-4aa5-8533-0978d671e88c" name="Changes" comment="security testing &amp; updates">
+      <change afterPath="$PROJECT_DIR$/Procfile" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -68,6 +64,7 @@
 }</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\eleru\PycharmProjects\CrystalProject" />
       <recent name="C:\Users\eleru\PycharmProjects\CrystalProject\templates" />
     </key>
   </component>
@@ -187,7 +184,15 @@
       <option name="project" value="LOCAL" />
       <updated>1775650668309</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="security testing &amp; updates">
+      <option name="closed" value="true" />
+      <created>1775663925831</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1775663925847</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -206,6 +211,7 @@
     <MESSAGE value="initial commit" />
     <MESSAGE value="database initialisation and constructor classes" />
     <MESSAGE value="project update, final dev push" />
-    <option name="LAST_COMMIT_MESSAGE" value="project update, final dev push" />
+    <MESSAGE value="security testing &amp; updates" />
+    <option name="LAST_COMMIT_MESSAGE" value="security testing &amp; updates" />
   </component>
 </project>
