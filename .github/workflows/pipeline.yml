@@ -42,7 +42,7 @@ jobs:
         uses: astral-sh/ruff-action@v3
         with:
           # runs the linter over the main directory specifically applying fixes for each changed file
-          args: "check --fix"
+          args: "check --fix --diff"
 
       # the deployment is run in the background making use of the nohup command
       - name: python deployment
