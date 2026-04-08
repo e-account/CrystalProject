@@ -22,7 +22,7 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 # Secret key for securing the config part of the application
 app.config['SECRET_KEY'] = os.getenv('SECURITY')
 # sqlalchemy database pathway config that will track updates to the database
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASECONFIG') + os.path.join(basedir, os.getenv('DATABASENAME'))
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'db.sqlite')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = os.getenv('SQL-TRACK-MOD')
 # database object constructor
 db = SQLAlchemy(app)
