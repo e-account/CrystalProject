@@ -20,7 +20,7 @@ bootstrap = Bootstrap(app)
 # set to allow for direct access to the root path of the application environment
 basedir = os.path.abspath(os.path.dirname(__file__))
 # Secret key for securing the config part of the application
-app.config['SECRET_KEY'] = os.getenv('SECURITY')
+app.config['SECRET_KEY'] = 'thisismysecretkey'
 # sqlalchemy database pathway config that will track updates to the database
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'db.sqlite')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = os.getenv('SQL-TRACK-MOD')
